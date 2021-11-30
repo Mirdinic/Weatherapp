@@ -8,9 +8,28 @@
 import SwiftUI
 
 struct ContentView: View {
+    @ObservedObject var model = WeatherModel()
     var body: some View {
-        Text("Hello, world!")
-            .padding()
+        if let weather = model.weather {
+            Text("Pogoda v Bishekeke: \(tempToString(weather.current.temp)) celcui")
+            List(weather.hourly){
+                hour in
+                Text("Hour: \(secondstoHour(hour.dt)), Temp: \(tempToString(hour.temp))")
+            }
+        }
+        else{
+            ProgressView()
+        }
+    }
+    func secondstoHour(_ unix: Double) -> String{
+        let date = Date(timeIntervalSince1970: unix)
+        let dateFormater = DateFormatter()
+        dateFormater.dateFormat = "h:mm a"
+        
+        return dateFormater.string(from: date)
+    }
+    func tempToString(_ temp: Double) -> String{
+        return String(format: "%.2f", temp)
     }
 }
 
